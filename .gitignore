@@ -1,1 +1,2 @@
 *.exe
+CMakeLists.txt #editor helper, CLion
