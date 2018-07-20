@@ -1,6 +1,6 @@
 import { getAdjacentCoordinates, openUntilNumber } from './utils';
 
-export default class Dot {
+export default class Grid {
   constructor(x, y, size, board) {
     this.isOpen = false;
     this._isBomb = false;

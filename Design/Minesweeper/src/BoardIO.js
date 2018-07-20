@@ -7,10 +7,9 @@ export default class BoardIO {
 
   setData({ boardSize, bombCount }) {
     this.boardManager.initBoard({ size: boardSize, bomb: bombCount });
-    console.log(`Board Set: Size = ${boardSize}, BombCount = ${bombCount}`);
   }
 
   playGame({ x, y }) {
-    this.boardManager.openCoordinate({ x: Number(x), y: Number(y) });
+    this.boardManager.openGrid({ x: Number(x), y: Number(y) });
   }
 }
