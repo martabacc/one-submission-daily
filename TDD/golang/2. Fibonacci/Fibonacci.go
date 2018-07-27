@@ -3,7 +3,11 @@ package main
 import "fmt"
 
 func getFibonacci(sequence int) int {
-	return sequence
+	if sequence == 1 || sequence == 2{
+		return 1
+	}
+
+	return getFibonacci(sequence-1) + getFibonacci(sequence-2)
 }
 
 func main() {

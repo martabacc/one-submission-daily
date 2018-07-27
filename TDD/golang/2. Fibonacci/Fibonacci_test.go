@@ -18,11 +18,20 @@ func Test(t *testing.T) {
 		assertCorrectMessage(t, actual, expected)
 	})
 
-	t.Run("should return 1 when sequence is 1", func(t *testing.T) {
+	t.Run("should return 1 when sequence is 2", func(t *testing.T) {
 		sequence := 2
 		actual := getFibonacci(sequence)
 		expected := 1
 
 		assertCorrectMessage(t, actual, expected)
 	})
+
+	t.Run("should return 2 when sequence is 3", func(t *testing.T) {
+		sequence := 3
+		actual := getFibonacci(sequence)
+		expected := 2
+
+		assertCorrectMessage(t, actual, expected)
+	})
+
 }
