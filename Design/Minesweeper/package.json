@@ -1,7 +1,7 @@
 {
-  "name": "NameHere",
+  "name": "Minesweeper",
   "version": "1.0.0",
-  "description": "<add-project-description-here>",
+  "description": "Minesweeper simple program, command line based",
   "scripts": {
     "test": "NODE_ENV=test mocha --require babel-core/register test/**/*.test.js",
     "coverage": "nyc --reporter=text --reporter=lcov npm run test",
