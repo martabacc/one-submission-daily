@@ -1,6 +1,5 @@
-# 2. Hello, World!
-
-Here are your very first start of starting Golang (and TDD) Journey. In this first example, I'm creating a simple "Hello World" version.
+# 3. 200 OK, Let's move to HTTP
+In this folder, we are trying to build HTTP simple server using TDD.
 
 ## Getting Started
 
@@ -8,13 +7,13 @@ Here are your very first start of starting Golang (and TDD) Journey. In this fir
 
 You can run
 ```sh
-$ go test main.go main_test.go
+$ go test server.go main.go
 ok      command-line-arguments  (cached)
 ```
 
 Try to fail the test. Change some string in `Hello()` function. Run the test and you will see this output
 ```sh
-$ go test main.go main_test.go
+$ go test server.go server_test.go
 --- FAIL: TestHello (0.00s)
         main_test.go:10: got 'Hello, wooorld' want 'Hello, world'
 FAIL
