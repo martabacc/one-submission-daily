@@ -25,6 +25,11 @@ map<char, int> areas;
 map<char, bool> isSavedBefore;
 priority_queue<int> winners;
 
+void resetIteratorDelete() {
+    loopTwiceThrough(LIMIT, LIMIT) delete_dp[x][y] = true;
+}
+
+
 void printLand(){
     for(int x=0;x<height;x++){
         for(int y=0;y<width; y++){
@@ -33,11 +38,14 @@ void printLand(){
         cout << endl;
     }
 }
+
 void initiateVariables() {
     map<char, bool> newSavedBefore;
     priority_queue<int> newSortedWinner;
+    map<char, int> newAreas;
     isSavedBefore = newSavedBefore;
     winners = newSortedWinner;
+    areas = newAreas;
     contested = 0;
     armies.clear();
 }
@@ -62,6 +70,10 @@ bool isAlly(char name, Position pos) {
     return (int) land[pos.x][pos.y] > 96 && (int) land[pos.x][pos.y] <= 122 && land[pos.x][pos.y] == name;
 }
 
+bool isFaction(Position pos) {
+    return (int) land[pos.x][pos.y] > 96 && (int) land[pos.x][pos.y] <= 122;
+}
+
 bool isMountain(Position pos) {
     return land[pos.x][pos.y] == '#';
 }
@@ -84,18 +96,16 @@ vector <Position> getAdjacents(int row, int column) {
     return results;
 }
 
-void resetIteratorDelete() {
-    loopTwiceThrough(LIMIT, LIMIT) delete_dp[x][y] = true;
-}
-
 void conquer(Position position) {
     loopThrough(armies.size()) {
         Position armyPosition = armies[x].position;
         if (position.x == armyPosition.x && position.y == armyPosition.y) {
+            cout <<  << ' GOT CONQUERED!' << endl;
             armies[x].isConquered = true;
             return;
         }
     }
+    cout << "GAK NEMU" << endl;
 }
 
 void setAsContestedArea(char name, int x, int y) {
@@ -105,6 +115,7 @@ void setAsContestedArea(char name, int x, int y) {
         Position pos = adjacents[x];
         if (delete_dp[pos.x][pos.y] && !isMountain(pos)) {
             if (!isEmpty(pos) || isEnemy(name, pos)) {
+                cout << "WEWE" << endl;
                 conquer(pos);
             }
             setAsContestedArea(name, pos.x, pos.y);
@@ -118,16 +129,16 @@ bool checkSurrounding(char name, int x, int y) {
     loopThrough(adjacents.size()) {
         Position pos = adjacents[x];
         if (isEmpty(pos)) {
-            cout << x << " " << y << " is empty" << endl;
+//            cout << x << " " << y << " is empty" << endl;
             land[pos.x][pos.y] = name;
             isNotContested = isNotContested && checkSurrounding(name, pos.x, pos.y);
         } else if (isEnemy(name, pos)) {
-            cout << name << " has enemy: " << land[pos.x][pos.y] << endl;
+//            cout << name << " has enemy: " << land[pos.x][pos.y] << endl;
             isNotContested = false;
             resetIteratorDelete();
             setAsContestedArea(name, pos.x, pos.y);
         } else if (isAlly(name, pos)) {
-            cout << name << " has ally: " << land[pos.x][pos.y] << endl;
+//            cout << name << " has ally: " << land[pos.x][pos.y] << endl;
             conquer(pos);
         }
     }
@@ -141,16 +152,20 @@ void investigateArea() {
         if (!army.isConquered) {
             bool isAbsoluteWinner = checkSurrounding(army.name, army.position.x, army.position.y);
             if (isAbsoluteWinner) {
+                cout << "WIN " << army.name << " (x: " << army.position.x << ") (y: " << army.position.y << ")"
+                     << endl;
                 incrementFaction(army);
             } else {
+                cout << "Wew conquered!" << army.name << " (x: " << army.position.x << ") (y: " << army.position.y << ")"
+                     << endl;
                 contested++;
             }
         } else {
-            cout << "Wew conquered!" << army.name << " (x: " << army.position.x << ") (y: " << army.position.y << ")"
+            cout << "NOT COUNTED: " << army.name << " (x: " << army.position.x << ") (y: " << army.position.y << ")"
                  << endl;
         }
         printLand();
-        getchar();
+//        getchar();
 
     }
 }
