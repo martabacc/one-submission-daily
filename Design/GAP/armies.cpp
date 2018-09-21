@@ -151,7 +151,7 @@ void setAsContestedArea(char name, int xx, int yy) {
 
 }
 
-bool checkSurrounding(char name, int xx, int yy) {
+bool floodFill(char name, int xx, int yy) {
     vector <Position> adjacents = getAdjacents(xx, yy);
 //    cout << "[FLOOD] Starting: " <<  name << " (x: " << xx << ") (y: " << yy << ")" << endl;
     bool isNotContested = true;
@@ -160,7 +160,7 @@ bool checkSurrounding(char name, int xx, int yy) {
         if (isEmpty(pos)) {
 //            cout << "[FLOOD] Is Empty: " <<  land[pos.x][pos.y] << " (x: " << pos.x << ") (y: " << pos.y << ")" << endl;
             land[pos.x][pos.y] = name;
-            isNotContested = isNotContested && checkSurrounding(name, pos.x, pos.y);
+            isNotContested = isNotContested && floodFill(name, pos.x, pos.y);
         } else if (isEnemy(name, pos)) {
 //            cout << "![FLOOD] Is Enemy: " <<  land[pos.x][pos.y] << " (x: " << pos.x << ") (y: " << pos.y << ")" << endl;
             isNotContested = false;
@@ -170,7 +170,7 @@ bool checkSurrounding(char name, int xx, int yy) {
         } else if (isAlly(name, pos) && !isConquered[pos.x][pos.y]) {
 //            cout << "[FLOOD] Is Ally: " <<  name << " (x: " << pos.x << ") (y: " << pos.y << ")" << endl;
             conquer(pos);
-            isNotContested = isNotContested && checkSurrounding(name, pos.x, pos.y);
+            isNotContested = isNotContested && floodFill(name, pos.x, pos.y);
         }
     }
     return isNotContested;
@@ -182,7 +182,7 @@ void investigateArea() {
         Army army = armies[x];
         if (!isConquered[army.position.x][army.position.y]) {
 //            cout << "[Investigating] " <<  army.name << " (x: " << army.position.x << ") (y: " << army.position.y << ")" << endl;
-            bool isAbsoluteWinner = checkSurrounding(army.name, army.position.x, army.position.y);
+            bool isAbsoluteWinner = floodFill(army.name, army.position.x, army.position.y);
             if (isAbsoluteWinner) {
                 incrementFaction(army);
             } else {
