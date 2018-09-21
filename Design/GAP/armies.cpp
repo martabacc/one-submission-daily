@@ -12,32 +12,21 @@ struct Position {
 struct Army {
     char name;
     Position position;
-    vector<char> contester;
 };
 
 int width, height, contested;
 char land[LIMIT][LIMIT], temp;
 bool isArmy[LIMIT][LIMIT];
 bool isConquered[LIMIT][LIMIT];
+bool delete_dp[LIMIT][LIMIT];
 vector <Army> armies;
 //bool delete_dp[LIMIT][LIMIT];
 map<char, int> areas;
 map<char, bool> isSavedBefore;
 priority_queue<int> winners;
 
-void printLand(){
-    cout << '@';
-    for(int x=0;x<width;x++){
-        cout << x%10 ;
-    }
-    cout << endl;
-    for(int x=0;x<height;x++){
-        cout << x;
-        for(int y=0;y<width; y++){
-            cout << land[x][y];
-        }
-        cout << endl;
-    }
+void resetDeleteDP() {
+    memset(delete_dp, true, sizeof delete_dp);
 }
 
 void initiateVariables() {
@@ -50,7 +39,37 @@ void initiateVariables() {
     contested = 0;
     armies.clear();
     memset(isArmy, false, sizeof isArmy);
+    resetDeleteDP();
     memset(isConquered, false, sizeof isConquered);
+}
+void printLand(){
+    cout << "[OUT] @ ";
+    for(int x=0;x<width;x++){
+        cout << x%10 ;
+    }
+    cout << endl;
+    for(int x=0;x<height;x++){
+        cout << "[OUT] "  << x % 10 << ' ';
+        for(int y=0;y<width; y++){
+            cout << land[x][y];
+        }
+        cout << endl;
+    }
+}
+
+void visualize(){
+    cout << "[VIS] @ ";
+    for(int x=0;x<width;x++){
+        cout << x%10 ;
+    }
+    cout << endl;
+    for(int x=0;x<height;x++){
+        cout << "[VIS] " << x % 10 << ' ';
+        for(int y=0;y<width; y++){
+            cout << (isConquered[x][y] && isArmy[x][y] ? '_' : land[x][y]);
+        }
+        cout << endl;
+    }
 }
 
 void incrementFaction(Army army) {
@@ -101,48 +120,55 @@ vector <Position> getAdjacents(int row, int column) {
 }
 
 void conquer(Position p) {
-//    cout << "Conquering: " << land[p.x][p.y] << " (x: " << p.x << ") (y: " << p.y << "). ";
+//    cout << "[CONQUER] Start conquering: " << land[p.x][p.y] << " (x: " << p.x << ") (y: " << p.y << "). "<< endl;
     if(!isConquered[p.x][p.y]){
         isConquered[p.x][p.y] = true;
         loopThrough(armies.size()) {
             Position a_pos = armies[x].position;
             if (p.x == a_pos.x && p.y == a_pos.y) {
-//                cout << endl << "We got him: " << a_pos.x << ',' << a_pos.y << ' ' << armies[x].name << endl;
+//                cout << "[CONQUER] Gotcha! "  << armies[x].name  <<' at ' << a_pos.x << ',' << a_pos.y << ' '<< endl;
                 isConquered[p.x][p.y] = true;
                 return;
             }
         }
     }
-//    else { cout << "[ALREADY CONQUERED]" << endl; }
+//    else { cout << "[CONQUER]: Already conquered!" << endl; }
 }
 
 void setAsContestedArea(char name, int xx, int yy) {
+//    cout << "[CONTESTING] Started from: " <<  land[xx][yy] << " (x: " << xx << ") (y: " << yy << ")" << endl;
     vector <Position> adjacents = getAdjacents(xx, yy);
-    isConquered[xx][yy] = true;
+
+    delete_dp[xx][yy] = false;
     loopThrough(adjacents.size()) {
         Position pos = adjacents[x];
-        if (!isConquered[pos.x][pos.y] && !isMountain(pos)) {
-            if (isFaction(name)) {
-                conquer(pos);
-            }
+        if (delete_dp[pos.x][pos.y] && !isMountain(pos)) {
+            if(!isMountain(pos)) isConquered[pos.x][pos.y] = true;
+            conquer(pos);
             setAsContestedArea(name, pos.x, pos.y);
         }
     }
+
 }
 
 bool checkSurrounding(char name, int xx, int yy) {
     vector <Position> adjacents = getAdjacents(xx, yy);
+//    cout << "[FLOOD] Starting: " <<  name << " (x: " << xx << ") (y: " << yy << ")" << endl;
     bool isNotContested = true;
     loopThrough(adjacents.size()) {
         Position pos = adjacents[x];
         if (isEmpty(pos)) {
+//            cout << "[FLOOD] Is Empty: " <<  land[pos.x][pos.y] << " (x: " << pos.x << ") (y: " << pos.y << ")" << endl;
             land[pos.x][pos.y] = name;
             isNotContested = isNotContested && checkSurrounding(name, pos.x, pos.y);
-        } else if (isEnemy(name, pos)  && !isConquered[pos.x][pos.y] ) {
+        } else if (isEnemy(name, pos)) {
+//            cout << "![FLOOD] Is Enemy: " <<  land[pos.x][pos.y] << " (x: " << pos.x << ") (y: " << pos.y << ")" << endl;
             isNotContested = false;
-            setAsContestedArea(name, xx, yy);
+            conquer(pos);
+            resetDeleteDP();
+            setAsContestedArea(name, pos.x, pos.y);
         } else if (isAlly(name, pos) && !isConquered[pos.x][pos.y]) {
-//            cout << "[Is ally] " <<  name << " (x: " << pos.x << ") (y: " << pos.y << ")" << endl;
+//            cout << "[FLOOD] Is Ally: " <<  name << " (x: " << pos.x << ") (y: " << pos.y << ")" << endl;
             conquer(pos);
             isNotContested = isNotContested && checkSurrounding(name, pos.x, pos.y);
         }
@@ -160,7 +186,7 @@ void investigateArea() {
             if (isAbsoluteWinner) {
                 incrementFaction(army);
             } else {
-//                cout << "CONTESTED " <<  army.name << " (x: " << army.position.x << ") (y: " << army.position.y << ")";
+//                cout << "[CONTESTED] " <<  army.name << " (x: " << army.position.x << ") (y: " << army.position.y << ")";
                 contested++;
 //                cout << "[COUNT] "  << contested << endl;
             }
@@ -168,6 +194,7 @@ void investigateArea() {
 //            cout << "[Not Counted] " <<  army.name << " (x: " << army.position.x << ") (y: " << army.position.y << ")" << endl;
         }
 //        printLand();
+//        visualize();
 //        getchar();
     }
 }
@@ -175,7 +202,7 @@ void investigateArea() {
 int main() {
 
     ofstream outputFile("out_armies.txt");
-    ifstream inFile("in3.txt");
+    ifstream inFile("in2.txt");
     string line;
     if (inFile.is_open()) {
         cout << "Start reading file" << endl;
@@ -195,7 +222,10 @@ int main() {
                     }
                 }
 
+//            printLand();
             investigateArea();
+
+//            visualize();
 
             int winningArmyCount = winners.size();
 
