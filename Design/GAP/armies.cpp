@@ -20,18 +20,19 @@ char land[LIMIT][LIMIT], temp;
 bool isArmy[LIMIT][LIMIT];
 bool isConquered[LIMIT][LIMIT];
 vector <Army> armies;
-bool delete_dp[LIMIT][LIMIT];
+//bool delete_dp[LIMIT][LIMIT];
 map<char, int> areas;
 map<char, bool> isSavedBefore;
 priority_queue<int> winners;
 
-void resetIteratorDelete() {
-    memset(delete_dp, false, sizeof delete_dp);
-}
-
-
 void printLand(){
+    cout << '@';
+    for(int x=0;x<width;x++){
+        cout << x%10 ;
+    }
+    cout << endl;
     for(int x=0;x<height;x++){
+        cout << x;
         for(int y=0;y<width; y++){
             cout << land[x][y];
         }
@@ -58,6 +59,7 @@ void incrementFaction(Army army) {
         isSavedBefore[army.name] = true;
         winners.push(-((int) army.name));
     }
+//    cout << "INCREMENTING: " <<  army.name << ' ' << areas[army.name] << endl;
 }
 
 bool isEmpty(Position pos) {
@@ -99,25 +101,28 @@ vector <Position> getAdjacents(int row, int column) {
 }
 
 void conquer(Position p) {
+//    cout << "Conquering: " << land[p.x][p.y] << " (x: " << p.x << ") (y: " << p.y << "). ";
     if(!isConquered[p.x][p.y]){
         isConquered[p.x][p.y] = true;
         loopThrough(armies.size()) {
-            Position armyPosition = armies[x].position;
-            if (p.x == armyPosition.x && p.y == armyPosition.y) {
+            Position a_pos = armies[x].position;
+            if (p.x == a_pos.x && p.y == a_pos.y) {
+//                cout << endl << "We got him: " << a_pos.x << ',' << a_pos.y << ' ' << armies[x].name << endl;
                 isConquered[p.x][p.y] = true;
                 return;
             }
         }
     }
+//    else { cout << "[ALREADY CONQUERED]" << endl; }
 }
 
-void setAsContestedArea(char name, int x, int y) {
-    vector <Position> adjacents = getAdjacents(x, y);
-    delete_dp[x][y] = false;
+void setAsContestedArea(char name, int xx, int yy) {
+    vector <Position> adjacents = getAdjacents(xx, yy);
+    isConquered[xx][yy] = true;
     loopThrough(adjacents.size()) {
         Position pos = adjacents[x];
-        if (delete_dp[pos.x][pos.y] && !isMountain(pos)) {
-            if (!isEmpty(pos) || isEnemy(name, pos)) {
+        if (!isConquered[pos.x][pos.y] && !isMountain(pos)) {
+            if (isFaction(name)) {
                 conquer(pos);
             }
             setAsContestedArea(name, pos.x, pos.y);
@@ -133,12 +138,13 @@ bool checkSurrounding(char name, int xx, int yy) {
         if (isEmpty(pos)) {
             land[pos.x][pos.y] = name;
             isNotContested = isNotContested && checkSurrounding(name, pos.x, pos.y);
-        } else if (isEnemy(name, pos)) {
+        } else if (isEnemy(name, pos)  && !isConquered[pos.x][pos.y] ) {
             isNotContested = false;
-            resetIteratorDelete();
             setAsContestedArea(name, xx, yy);
-        } else if (isAlly(name, pos)) {
+        } else if (isAlly(name, pos) && !isConquered[pos.x][pos.y]) {
+//            cout << "[Is ally] " <<  name << " (x: " << pos.x << ") (y: " << pos.y << ")" << endl;
             conquer(pos);
+            isNotContested = isNotContested && checkSurrounding(name, pos.x, pos.y);
         }
     }
     return isNotContested;
@@ -148,21 +154,28 @@ void investigateArea() {
     int armiesCount = armies.size();
     loopThrough(armiesCount) {
         Army army = armies[x];
-        if (!isConquered[armies[x].position.x][armies[x].position.y]) {
+        if (!isConquered[army.position.x][army.position.y]) {
+//            cout << "[Investigating] " <<  army.name << " (x: " << army.position.x << ") (y: " << army.position.y << ")" << endl;
             bool isAbsoluteWinner = checkSurrounding(army.name, army.position.x, army.position.y);
             if (isAbsoluteWinner) {
                 incrementFaction(army);
             } else {
+//                cout << "CONTESTED " <<  army.name << " (x: " << army.position.x << ") (y: " << army.position.y << ")";
                 contested++;
+//                cout << "[COUNT] "  << contested << endl;
             }
+        } else {
+//            cout << "[Not Counted] " <<  army.name << " (x: " << army.position.x << ") (y: " << army.position.y << ")" << endl;
         }
+//        printLand();
+//        getchar();
     }
 }
 
 int main() {
 
     ofstream outputFile("out_armies.txt");
-    ifstream inFile("in.txt");
+    ifstream inFile("in3.txt");
     string line;
     if (inFile.is_open()) {
         cout << "Start reading file" << endl;
@@ -197,6 +210,11 @@ int main() {
 
             outputFile << "contested " << contested << endl;
         }
+        cout << "Finish reading file, exiting..." << endl;
+        inFile.close();
+        outputFile.close();
     }
+
+    return 0;
 
 }
