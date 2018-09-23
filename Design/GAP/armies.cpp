@@ -201,8 +201,8 @@ void investigateArea() {
 
 int main() {
 
-    ofstream outputFile("out_armies.txt");
-    ifstream inFile("in.txt");
+    ofstream outputFile("armies_testcases/out_armies.txt");
+    ifstream inFile("armies_testcases/in.txt");
     string line;
     if (inFile.is_open()) {
         cout << "Start reading file" << endl;
