@@ -1,3 +1,13 @@
+
+########################
+# Random annoying file #
+########################
+.idea
+.vscode
+cmake-build-debug
+CMakeLists.txt
+
+
 ######################
 # OS generated files #
 ######################
