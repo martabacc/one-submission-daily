@@ -1,7 +1,5 @@
 #include<iostream>
-using std::cin;
-using std::cout;
-using std::endl;
+using namespace std;
 
 int main(){
 	long int n, k,b;
@@ -14,11 +12,10 @@ int main(){
 			sumAllPrice += y;
 		}
 	}
-	
+
 	cin >> b;
 	if(sumAllPrice/2 != b) cout << b - (sumAllPrice/2) <<endl;
 	else cout << "Bon Appetit" << endl;
-	
+
 	return 0;
 }
-

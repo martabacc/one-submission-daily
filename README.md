@@ -3,6 +3,8 @@
 Backup for coding exercise files.
 Some of these codes arent mine, you may check at the head lines of the codes.
 
+I also write summaries about several fundamental topics in [SUMMARY.MD](./SUMMARY.MD). I write it for interview preparations, or just have spare time and decided to learn more ehehehe.
+
 ## Written in
 Mostly C++, but also use Javascript (Nodejs), Golang and Python as some concepts (data structure, STL) may implemented differently in each language.
 
