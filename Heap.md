@@ -39,7 +39,6 @@ STL Implementation:
 - Add the element at the bottom leaf of the Heap.
 - Perform the Bubble-Up operation.
 - All Insert Operations must perform the bubble-up operation(it is also called as up-heap, percolate-up, sift-up, trickle-up, heapify-up, or cascade-up)
--
 
 ### Bubble up Operation
 
