@@ -82,7 +82,7 @@ Sorting In Place: Yes
 
 Stable: Yes
 
-![Insertion Sort](assets/heap/insertionsort.png)
+![Insertion Sort](assets/sort/insertionsort.png)
 
 ```cpp
 void insertionSort(int arr[], int count) {
@@ -113,6 +113,9 @@ Variations:
 - Pick a random element as pivot.
 - Pick median as pivot.
 
+
+![Quick Sort Joke](assets/sort/quicksort-joke.png)
+
 Pseudocode:
 ```
 /* low  --> Starting index,  high  --> Ending index */
@@ -130,7 +133,7 @@ quickSort(arr[], low, high)
 }
 ```
 
-![Quick Sort](assets/heap/quicksort.png)
+![Quick Sort](assets/sort/quicksort.png)
 
 ### Cases Analysis
 
@@ -221,7 +224,7 @@ If r > l
  ```
 
 
- ![Merge Sort](assets/heap/mergesort.png)
+ ![Merge Sort](assets/sort/mergesort.png)
 
 ```cpp
 // Merges two subarrays of arr[].

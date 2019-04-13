@@ -165,5 +165,9 @@ int main()
     char pat[] = "ABABCABAB";
     KMPSearch(pat, txt);
     return 0;
-} 
+}
 ```
+
+## Interesting Matters
+
+- [Practice Questions on Strings](https://www.geeksforgeeks.org/problem-solving-strings/)
