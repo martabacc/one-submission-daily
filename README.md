@@ -1,6 +1,8 @@
 # one submission daily
 
-Notes and highlights regardinig algorithms are in topics in dir [algorithms](./algorithms). 
+Notes and highlights in dir [algorithms](./algorithms). 
+
+Code submissions (online judge-related) in dir [submissions](./submissions). 
 
 ## Written in
 C++, node, python.
