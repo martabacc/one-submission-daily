@@ -1,4 +1,5 @@
 package com.mycompany.domain;
+
 import java.util.*;
 
 public class FizzBuzz {
